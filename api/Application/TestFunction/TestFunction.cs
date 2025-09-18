@@ -10,7 +10,6 @@ namespace FuncAPI
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
             var response = req.CreateResponse(HttpStatusCode.OK);
-            response.Headers.Add("Access-Control-Allow-Origin", "https://anturated.github.io");
             await response.WriteStringAsync("Hello from Azure Functions!");
             return response;
         }
