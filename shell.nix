@@ -6,7 +6,8 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.dotnet-sdk_8
     pkgs.dotnet-sdk_9
-    pkgs.dotnetCorePackages.runtime_9_0-bin
+    pkgs.dotnet-runtime_9
+    pkgs.dotnet-runtime_8
     pkgs.omnisharp-roslyn
 
     pkgs.azure-cli
