@@ -275,3 +275,4 @@ python/lib*
 python/pyvenv.cfg
 .direnv/
 .envrc
+.config/
