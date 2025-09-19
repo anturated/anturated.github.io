@@ -1,21 +1,35 @@
 import {useEffect, useState} from "react";
 import logo from './logo.svg';
 import './App.css';
-// import List from './components/List'
+
+import Form from "./components/Form";
+import Header from "./components/Header";
+import TodoList from "./components/TodoList";
+import TodoBanner from "./components/TodoBanner";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const API_URL = process.env.REACT_APP_API_URL
+
+  const [todos, setTodos] = useState([]);
 
   useEffect(() => {
-    fetch("https://anturated-cnepggaggjegayfp.polandcentral-01.azurewebsites.net/api/TestFunction")
+    fetch(`${API_URL}/api/todos`)
     .then((res) => res.text())
-    .then((data) => setMessage(data));
+    .then((data) => JSON.parse(data))
+    .then((data) => setTodos(data))
   }, []);
 
   return (
     <div className="App">
-      <h1>sample text</h1>
-      <p>{message}</p>
+      {/* <h1>sample text</h1> */}
+
+      <Header/>
+      <TodoBanner
+        todo_completed={todos.filter(t => t.done).length}
+        todo_total={todos.length}
+      />
+      <Form setTodos={setTodos}/>
+      <TodoList todos={todos} setTodos={setTodos}/>
     </div>
   );
 }
