@@ -1,4 +1,5 @@
-function Form({setTodos}) {
+import Icon from "./Icon"
+function Form({ setTodos }) {
   const API_URL = process.env.REACT_APP_API_URL
 
   const handleSubmit = async (event) => {
@@ -7,16 +8,16 @@ function Form({setTodos}) {
     const value = event.target.todo.value;
     const response = await fetch(`${API_URL}/api/todos`, {
       method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({text: value})
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: value })
     });
 
     if (response.ok) {
       const created = await response.json();
-      setTodos((prevTodos) => 
-      prevTodos.some(t => t.id === created.id)
-        ? prevTodos
-        : [...prevTodos, {text: created.text, id: created.id, done: created.done} ]);
+      setTodos((prevTodos) =>
+        prevTodos.some(t => t.id === created.id)
+          ? prevTodos
+          : [...prevTodos, { text: created.text, id: created.id, done: created.done }]);
     } else {
       console.error("failed to add todo");
     }
@@ -36,7 +37,7 @@ function Form({setTodos}) {
       </label>
       <button>
         <span className="visually-hidden">Submit</span>
-        <span className="material-icons">add</span>
+        <Icon i="add" />
       </button>
     </form>
   );
