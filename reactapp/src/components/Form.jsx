@@ -13,10 +13,10 @@ function Form({setTodos}) {
 
     if (response.ok) {
       const created = await response.json();
-      setTodos((prevTodos) => [
-        ...prevTodos,
-        {text: created.text, id: created.id, done: created.done}
-      ]);
+      setTodos((prevTodos) => 
+      prevTodos.some(t => t.id === created.id)
+        ? prevTodos
+        : [...prevTodos, {text: created.text, id: created.id, done: created.done} ]);
     } else {
       console.error("failed to add todo");
     }
@@ -31,7 +31,7 @@ function Form({setTodos}) {
           type="text"
           name="todo"
           id="todo"
-          placeholder="text here"
+          placeholder="Попиши мені тута"
         />
       </label>
       <button>

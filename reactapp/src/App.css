@@ -1,42 +1,3 @@
-/* .App { */
-/*   text-align: center; */
-/* } */
-/**/
-/* .App-logo { */
-/*   height: 40vmin; */
-/*   pointer-events: none; */
-/* } */
-/**/
-/* @media (prefers-reduced-motion: no-preference) { */
-/*   .App-logo { */
-/*     animation: App-logo-spin infinite 20s linear; */
-/*   } */
-/* } */
-/**/
-/* .App-header { */
-/*   background-color: #282c34; */
-/*   min-height: 100vh; */
-/*   display: flex; */
-/*   flex-direction: column; */
-/*   align-items: center; */
-/*   justify-content: center; */
-/*   font-size: calc(10px + 2vmin); */
-/*   color: white; */
-/* } */
-/**/
-/* .App-link { */
-/*   color: #61dafb; */
-/* } */
-/**/
-/* @keyframes App-logo-spin { */
-/*   from { */
-/*     transform: rotate(0deg); */
-/*   } */
-/*   to { */
-/*     transform: rotate(360deg); */
-/*   } */
-/* } */
-
 *,
 *::after,
 *::before {
@@ -45,9 +6,7 @@
   font-family: inherit;
   box-sizing: border-box;
 
-  /* --color-primary: #a4d396; */
-  /* --color-secondary: #bbcbb2; */
-
+  --max-width: 1000px;
 
   --color-background: #11140f;
   --color-error: #ffb4ab;
@@ -139,7 +98,7 @@ button {
 .App {
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 100%;
 }
 
 @media (max-width: 510px) {
@@ -147,17 +106,21 @@ button {
     width: 100%;
   }
 
-  header {
+  .header {
     justify-content: center;
   }
 }
 
-header {
+.header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
   padding: 42px;
+}
+
+.header span {
+  font-size: 50px;
 }
 
 .todo_banner {
@@ -167,7 +130,7 @@ header {
   justify-content: space-around;
   align-self: center;
   width: 90%;
-  max-width: 455px;
+  max-width: var(--max-width);
   padding: 12px;
   border-radius: 11px;
 }
@@ -187,7 +150,7 @@ header {
 .form {
   align-self: center;
   width: 97%;
-  max-width: 455px;
+  max-width: var(--max-width);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -210,7 +173,7 @@ header {
 }
 
 .form button {
-  width: 10%;
+  width: 20%;
   height: 50px;
   border-radius: 11px;
   background-color: var(--color-primary);
@@ -220,7 +183,7 @@ header {
 .todo_list {
   align-self: center;
   width: 97%;
-  max-width: 455px;
+  max-width: var(--max-width);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -236,7 +199,7 @@ header {
   align-items: center;
   height: 70px;
   width: 100%;
-  max-width: 455px;
+  max-width: var(--max-width);
   border: 1px solid var(--color-outline);
   font-size: 16px;
   background-color: var(--color-surface-container-lowest);

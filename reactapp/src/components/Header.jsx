@@ -1,9 +1,10 @@
+import Icon from "./Icon"
 function Header() {
   return (
-    <>
-      <span className="material-icons">volume_down</span>
-      <h1>TODO</h1>
-    </>
+    <div className="header">
+      <Icon i="note_stack"/>
+      <h1>Сисок зачад</h1>
+    </div>
   );
 }
 

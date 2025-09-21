@@ -3,6 +3,7 @@ using FuncAPI.Domain.Model;
 using FuncAPI.Persistence.Data;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.SignalR.Management;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -11,10 +12,12 @@ namespace FuncAPI.Functions;
 public class TodoFunction
 {
     private readonly StorageContext context;
+    private readonly ServiceManager services;
 
-    public TodoFunction(StorageContext ctx)
+    public TodoFunction(StorageContext ctx, ServiceManager serviceManager)
     {
         context = ctx;
+        services = serviceManager;
     }
 
     [Function("GetTodos")]
@@ -48,26 +51,38 @@ public class TodoFunction
     [Function("AddTodos")]
     public async Task<HttpResponseData> AddItem(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "todos")] HttpRequestData req,
-            string text)
+            CancellationToken cancellationToken)
     {
         HttpResponseData response;
+        SignalRMessageAction message;
 
         try
         {
-            var newTodo = new TodoItem() { text = text };
+            var request = await req.ReadFromJsonAsync<AddTodoRequest>();
+            if (request == null)
+                throw new Exception("failed reading request data");
+
+            var newTodo = new TodoItem() { text = request.text };
+
             context.Todos.Add(newTodo);
             await context.SaveChangesAsync();
 
-            response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(new TodoDTO()
+            var dto = new TodoDTO()
             {
                 text = newTodo.text,
                 done = newTodo.done,
                 id = newTodo.Id
-            });
+            };
+
+            await using var hubContext = await services.CreateHubContextAsync("todos", cancellationToken);
+            await hubContext.Clients.All.SendCoreAsync("todoUpdated", new[] { dto });
+
+            response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(dto);
         }
         catch (Exception ex)
         {
+            message = new("");
             response = req.CreateResponse(HttpStatusCode.BadRequest);
             await response.WriteStringAsync(ex.Message);
         }
@@ -77,7 +92,8 @@ public class TodoFunction
 
     [Function("EditTodos")]
     public async Task<HttpResponseData> EditTodos(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "todos")] HttpRequestData req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "todos")] HttpRequestData req,
+            CancellationToken cancellationToken)
     {
         HttpResponseData response;
 
@@ -98,8 +114,18 @@ public class TodoFunction
             todo.done = request.done;
             await context.SaveChangesAsync();
 
+            var dto = new TodoDTO()
+            {
+                text = todo.text,
+                done = todo.done,
+                id = todo.Id
+            };
+
+            await using var hubContext = await services.CreateHubContextAsync("todos", cancellationToken);
+            await hubContext.Clients.All.SendCoreAsync("todoUpdated", new[] { dto });
+
             response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(todo);
+            await response.WriteAsJsonAsync(dto);
         }
         catch (Exception ex)
         {
@@ -113,23 +139,34 @@ public class TodoFunction
     [Function("DeleteTodos")]
     public async Task<HttpResponseData> DeleteTodos(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "todos")] HttpRequestData req,
-            Guid id)
+            CancellationToken cancellationToken)
     {
         HttpResponseData response;
+        var request = await req.ReadFromJsonAsync<DeleteTodoRequest>();
+        if (request == null) throw new Exception("cant read id");
 
         try
         {
-            var todo = await context.Todos.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var todo = await context.Todos.Where(t => t.Id == request.id).FirstOrDefaultAsync();
 
             if (todo == null)
                 throw new Exception("Id not found");
 
-            string text = todo.text;
+            var deleted = new TodoDTO()
+            {
+                text = todo.text,
+                id = todo.Id,
+                done = todo.done
+            };
+
             context.Todos.Remove(todo);
             await context.SaveChangesAsync();
 
+            await using var hubContext = await services.CreateHubContextAsync("todos", cancellationToken);
+            await hubContext.Clients.All.SendCoreAsync("todoDeleted", new[] { deleted });
+
             response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteStringAsync(text);
+            await response.WriteAsJsonAsync(deleted);
         }
         catch (Exception ex)
         {
@@ -137,6 +174,16 @@ public class TodoFunction
             await response.WriteStringAsync(ex.Message);
         }
 
+        return response;
+    }
+
+    [Function("negotiate")]
+    public async Task<HttpResponseData> Negotiate(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", "options", Route = "todos/negotiate")] HttpRequestData req,
+        [SignalRConnectionInfoInput(HubName = "todos")] SignalRConnectionInfo connectionInfo)
+    {
+        HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteAsJsonAsync(connectionInfo);
         return response;
     }
 }

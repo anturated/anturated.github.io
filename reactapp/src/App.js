@@ -11,25 +11,32 @@ function App() {
   const API_URL = process.env.REACT_APP_API_URL
 
   const [todos, setTodos] = useState([]);
+  var todoStatus = 1;
 
   useEffect(() => {
-    fetch(`${API_URL}/api/todos`)
-    .then((res) => res.text())
-    .then((data) => JSON.parse(data))
-    .then((data) => setTodos(data))
+
+    try {
+      fetch(`${API_URL}/api/todos`)
+      .then((res) => res.text())
+      .then((data) => JSON.parse(data))
+      .then((data) => setTodos(data))
+
+      todoStatus = 0;
+    } catch (error) {
+      console.error(error);
+      todoStatus = -1;
+    }
   }, []);
 
   return (
     <div className="App">
-      {/* <h1>sample text</h1> */}
-
       <Header/>
       <TodoBanner
         todo_completed={todos.filter(t => t.done).length}
         todo_total={todos.length}
       />
       <Form setTodos={setTodos}/>
-      <TodoList todos={todos} setTodos={setTodos}/>
+      <TodoList todos={todos} setTodos={setTodos} todoStatus={todoStatus}/>
     </div>
   );
 }
