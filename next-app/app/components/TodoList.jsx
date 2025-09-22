@@ -1,9 +1,13 @@
-import Icon from "./Icon"
-import { useState, useEffect, useRef } from "react";
+"use client"
+
+import { useContext, useState, useEffect, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 
+import Icon from "./Icon"
+import { api_url } from "../page";
+
 function TodoList({ todos, dispatch, todoStatus }) {
-  const API_URL = process.env.REACT_APP_API_URL
+  const API_URL = useContext(api_url);
 
   // connect to SignalR
   useEffect(() => {
@@ -72,7 +76,7 @@ function TodoList({ todos, dispatch, todoStatus }) {
 }
 
 function Item({ item, dispatch }) {
-  const API_URL = process.env.REACT_APP_API_URL
+  const API_URL = useContext(api_url);
 
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);

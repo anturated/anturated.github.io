@@ -1,18 +1,20 @@
-import { useEffect, useReducer } from "react";
-import todoReducer from "./components/todoReducer"
-import './App.css';
+"use client";
+
+import "../styles/App.css";
+
+import { useContext, createContext, useReducer, useEffect, useState } from "react";
 
 import Form from "./components/Form";
 import Header from "./components/Header";
 import TodoList from "./components/TodoList";
 import TodoBanner from "./components/TodoBanner";
 
-function App() {
-  const API_URL = process.env.REACT_APP_API_URL
+import todoReducer from "./lib/todoReducer";
 
-  // const [todos, setTodos] = useState([]);
+export default function Home() {
   const [todos, dispatch] = useReducer(todoReducer, []);
-  var todoStatus = 1;
+  const [todoStatus, setStatus] = useState(1);
+  const API_URL = useContext(api_url);
 
   useEffect(() => {
 
@@ -25,11 +27,10 @@ function App() {
           todos: data,
         }))
 
-
-      todoStatus = 0;
+      setStatus(0);
     } catch (error) {
       console.error(error);
-      todoStatus = -1;
+      setStatus(-1);
     }
   }, []);
 
@@ -46,4 +47,4 @@ function App() {
   );
 }
 
-export default App;
+export const api_url = createContext(process.env.NEXT_PUBLIC_API_URL);

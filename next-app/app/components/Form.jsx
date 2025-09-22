@@ -1,6 +1,12 @@
+"use client"
+
 import Icon from "./Icon"
+import { api_url } from "../page";
+
+import { useContext } from "react";
+
 function Form({ todos, dispatch }) {
-  const API_URL = process.env.REACT_APP_API_URL
+  const API_URL = useContext(api_url);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
