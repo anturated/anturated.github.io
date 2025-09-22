@@ -4,12 +4,12 @@ import "../styles/App.css";
 
 import { useContext, createContext, useReducer, useEffect, useState } from "react";
 
-import Form from "./components/Form";
-import Header from "./components/Header";
-import TodoList from "./components/TodoList";
-import TodoBanner from "./components/TodoBanner";
+import Form from "../app/components/Form";
+import Header from "../app/components/Header";
+import TodoList from "../app/components/TodoList";
+import TodoBanner from "../app/components/TodoBanner";
 
-import todoReducer from "./lib/todoReducer";
+import todoReducer from "../app/lib/todoReducer";
 
 export default function Home() {
   const [todos, dispatch] = useReducer(todoReducer, []);

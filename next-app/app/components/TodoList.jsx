@@ -4,7 +4,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 
 import Icon from "./Icon"
-import { api_url } from "../page";
+import { api_url } from "../../pages";
 
 function TodoList({ todos, dispatch, todoStatus }) {
   const API_URL = useContext(api_url);

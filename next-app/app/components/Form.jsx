@@ -1,7 +1,7 @@
 "use client"
 
 import Icon from "./Icon"
-import { api_url } from "../page";
+import { api_url } from "../../pages";
 
 import { useContext } from "react";
 
