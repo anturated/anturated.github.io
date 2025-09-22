@@ -1,8 +1,8 @@
 import Icon from "./Icon"
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 
-function TodoList({ todos, setTodos, todoStatus }) {
+function TodoList({ todos, dispatch, todoStatus }) {
   const API_URL = process.env.REACT_APP_API_URL
 
   // connect to SignalR
@@ -27,18 +27,18 @@ function TodoList({ todos, setTodos, todoStatus }) {
 
       // bind to todo updates / add
       connection.on("todoUpdated", (updatedTodo) => {
-        setTodos((prev) =>
-          prev.some(t => t.id === updatedTodo.id)
-            ? prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t))
-            : [...prev, updatedTodo]
-        );
+        dispatch({
+          type: 'edit',
+          todo: updatedTodo,
+        });
       });
 
       // bind to todo deletes
       connection.on("todoDeleted", (deletedTodo) => {
-        setTodos((prev) =>
-          [...prev.filter(t => t.id !== deletedTodo.id)]
-        );
+        dispatch({
+          type: 'delete',
+          id: deletedTodo.id
+        })
       });
 
       await connection.start().catch(console.error);
@@ -57,7 +57,7 @@ function TodoList({ todos, setTodos, todoStatus }) {
   return (
     <ol className="todo_list">
       {todos && todos.length > 0 ? (
-        todos?.map((item, index) => <Item key={index} item={item} setTodos={setTodos} />)
+        todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} />)
       ) : (
         <p>{
           todoStatus === -1 ? "Не загрузило :(" :
@@ -71,7 +71,7 @@ function TodoList({ todos, setTodos, todoStatus }) {
   );
 }
 
-function Item({ item, setTodos }) {
+function Item({ item, dispatch }) {
   const API_URL = process.env.REACT_APP_API_URL
 
   const [editing, setEditing] = useState(false);
@@ -86,9 +86,7 @@ function Item({ item, setTodos }) {
     });
 
     if (response.ok) {
-      setTodos((prevTodos) => [
-        ...prevTodos.filter(t => t.id !== item.id)
-      ]);
+      // TODO: reducer
     } else {
       console.error("error deleting");
     }
@@ -103,8 +101,10 @@ function Item({ item, setTodos }) {
     });
 
     if (response.ok) {
-      setTodos((prevTodos) => prevTodos.map(t =>
-        t.id === item.id ? { ...t, done: !item.done } : t));
+      dispatch({
+        type: 'edit',
+        todo: { ...item, done: !item.done }
+      });
     } else {
       console.error("error checking");
     }
@@ -133,8 +133,10 @@ function Item({ item, setTodos }) {
     const prevText = item.text;
     const newText = inputRef.current.value;
 
-    setTodos((prevTodos) => prevTodos.map(t =>
-      t.id === item.id ? { ...t, text: newText } : t));
+    dispatch({
+      type: 'edit',
+      todo: { ...item, text: newText }
+    });
 
     const response = await fetch(`${API_URL}/api/todos`, {
       method: "POST",
@@ -145,8 +147,11 @@ function Item({ item, setTodos }) {
     if (response.ok) {
     } else {
       console.error("error editing");
-      setTodos((prevTodos) => prevTodos.map(t =>
-        t.id === item.id ? { ...t, text: prevText } : t));
+
+      dispatch({
+        type: 'edit',
+        todo: { ...item, text: prevText }
+      });
     }
   }
 
@@ -196,7 +201,6 @@ function Item({ item, setTodos }) {
               id="edit-todo"
               defaultValue={item?.text}
               onBlur={handleInputBlur}
-            // onChange={handleinputchan}
             />
           </label>
         </form>

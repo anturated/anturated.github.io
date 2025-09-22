@@ -1,5 +1,5 @@
 import Icon from "./Icon"
-function Form({ setTodos }) {
+function Form({ todos, dispatch }) {
   const API_URL = process.env.REACT_APP_API_URL
 
   const handleSubmit = async (event) => {
@@ -14,10 +14,11 @@ function Form({ setTodos }) {
 
     if (response.ok) {
       const created = await response.json();
-      setTodos((prevTodos) =>
-        prevTodos.some(t => t.id === created.id)
-          ? prevTodos
-          : [...prevTodos, { text: created.text, id: created.id, done: created.done }]);
+      if (!todos.some(t => t.id === created.id))
+        dispatch({
+          type: 'edit',
+          todo: { text: created.text, id: created.id, done: created.done },
+        });
     } else {
       console.error("failed to add todo");
     }

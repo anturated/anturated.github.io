@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import logo from './logo.svg';
+import { useEffect, useReducer } from "react";
+import todoReducer from "./components/todoReducer"
 import './App.css';
 
 import Form from "./components/Form";
@@ -10,16 +10,21 @@ import TodoBanner from "./components/TodoBanner";
 function App() {
   const API_URL = process.env.REACT_APP_API_URL
 
-  const [todos, setTodos] = useState([]);
+  // const [todos, setTodos] = useState([]);
+  const [todos, dispatch] = useReducer(todoReducer, []);
   var todoStatus = 1;
 
   useEffect(() => {
 
     try {
       fetch(`${API_URL}/api/todos`)
-      .then((res) => res.text())
-      .then((data) => JSON.parse(data))
-      .then((data) => setTodos(data))
+        .then((res) => res.text())
+        .then((data) => JSON.parse(data))
+        .then((data) => dispatch({
+          type: 'set',
+          todos: data,
+        }))
+
 
       todoStatus = 0;
     } catch (error) {
@@ -30,13 +35,13 @@ function App() {
 
   return (
     <div className="App">
-      <Header/>
+      <Header />
       <TodoBanner
         todo_completed={todos.filter(t => t.done).length}
         todo_total={todos.length}
       />
-      <Form setTodos={setTodos}/>
-      <TodoList todos={todos} setTodos={setTodos} todoStatus={todoStatus}/>
+      <Form todos={todos} dispatch={dispatch} />
+      <TodoList todos={todos} dispatch={dispatch} todoStatus={todoStatus} />
     </div>
   );
 }
