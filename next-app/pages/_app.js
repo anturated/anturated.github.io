@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import '../styles/globals.css'
+import Head from 'next/head'
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,20 +18,21 @@ export const metadata = {
   description: "Better webapp in the world.",
 };
 
-export default function RootLayout({ children }) {
+export default function App({ Component, pageProps }) {
   return (
-    <html lang="en">
-      <head>
+    <html>
+      <Head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
           rel="stylesheet"
         />
-      </head>
+      </Head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Component {...pageProps} />
       </body>
     </html>
-  );
+  )
 }
