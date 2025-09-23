@@ -29,6 +29,8 @@ export default function Editor({ todo, dispatch, setSelectedTodo }: EditorProps)
     <div className="modal-overlay" >
       <div className="modal-content">
         <textarea
+
+          placeholder="Шооо тут можна писати"
           value={text}
           onChange={e => setText(e.currentTarget.value)}
         />

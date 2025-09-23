@@ -251,7 +251,7 @@ button {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--color-surface-container) * 0.5;
+  background: color-mix(in srgb, var(--color-surface-container) 50%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -277,6 +277,10 @@ button {
   font-family: "Maple Mono";
 }
 
+.modal-content textarea {
+  resize: none;
+}
+
 .modal-buttons {
   justify-self: flex-end;
   display: flex;
@@ -284,7 +288,7 @@ button {
 }
 
 .modal-buttons span {
-  font-size: 4vh;
+  font-size: 2.3rem;
 }
 
 .has-content {
