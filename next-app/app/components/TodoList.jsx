@@ -18,7 +18,10 @@ function TodoList({ todos, dispatch, todoStatus }) {
       const negotiation = await fetch(`${API_URL}/api/todos/negotiate`, {
         method: "POST",
         credentials: "omit" // CORS
-      }).then(r => r.json());
+      }).then(r => r.json())
+        .catch(e => {
+          throw Error("could not negotiate");
+        });
 
       // create connection to Azure SignalR thing
       const connection = new signalR.HubConnectionBuilder()
@@ -49,7 +52,9 @@ function TodoList({ todos, dispatch, todoStatus }) {
     }
 
     // async workaround
-    startConnection();
+    startConnection().catch(e => {
+      console.error(e);
+    });
 
     return () => {
       if (connection) {

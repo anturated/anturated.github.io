@@ -17,21 +17,22 @@ export default function Home() {
   const API_URL = useContext(api_url);
 
   useEffect(() => {
-
-    try {
-      fetch(`${API_URL}/api/todos`)
-        .then((res) => res.text())
-        .then((data) => JSON.parse(data))
-        .then((data) => dispatch({
-          type: 'set',
-          todos: data,
-        }))
-
-      setStatus(0);
-    } catch (error) {
-      console.error(error);
-      setStatus(-1);
-    }
+    fetch(`${API_URL}/api/todos`)
+      .then((res) => res.text())
+      .then((data) => JSON.parse(data))
+      .then((data) => dispatch({
+        type: 'set',
+        todos: data,
+      }))
+      .then(() => setStatus(0))
+      .catch(e => {
+        console.error("error fetching todods: " + e);
+        setStatus(-1);
+      })
+    const timer = setInterval(() => {
+      if (status === 1)
+        setStatus(2);
+    }, 2000);
   }, []);
 
   return (

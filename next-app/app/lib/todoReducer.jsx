@@ -34,7 +34,6 @@ async function dbEdit(method, body) {
   });
 
   return response;
-
 }
 
 export default todoReducer;
