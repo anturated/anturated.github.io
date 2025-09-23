@@ -1,4 +1,5 @@
 import { useEffect, useState, } from "react"
+import "../styles/events.css"
 
 
 const API_URL = "http://localhost:5000/api/events";
@@ -22,13 +23,17 @@ export default function Events() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          eventId: "019973c7-5104-7526-8b42-93176b8f6812",
+          eventId: "019978c4-310e-7737-bd5e-7f4d84ae5e23",
           email: `email${index}`,
           name: "bobik"
         }),
       });
       console.log(`register number ${index} ` + response.ok ? "success" : "fail");
     }
+  }
+
+  const handleNuke = () => {
+    fetch(`${API_URL}/nuke`);
   }
 
   const handleInit = () => {
@@ -43,8 +48,9 @@ export default function Events() {
       </form>
 
       <h3>{debugText}</h3>
-      <button onClick={handleSpam}>spam</button>
+      <button onClick={handleSpam}>spam </button>
       <button onClick={handleInit}>init</button>
+      <button onClick={handleNuke}>Nuke</button>
 
       <ol>
         {events?.map((ev, index) =>
@@ -91,10 +97,15 @@ function Event({ ev, setEvents, email, name, setDebugText }) {
       setDebugText("email fali");
   }
 
+  const start = (new Date(ev.timeStart)).toLocaleString();
+  const end = (new Date(ev.timeEnd)).toLocaleString();
+
   return <li>
     <p>{ev.name}</p>
-    <p>{ev.id}</p>
-    <p>{ev.slotsTaken}/{ev.slots}</p>
+    {/* <p>{ev.id}</p> */}
+    <p>Start: {start}</p>
+    <p>End: {end}</p>
+    <p className="slots">{ev.slotsTaken}/{ev.slots}</p>
     <button onClick={ev.slotsTaken >= ev.slots ? handleSendEmail : handleRegister}>
       {ev.slotsTaken >= ev.slots ? "send email" : "register"}
     </button>
