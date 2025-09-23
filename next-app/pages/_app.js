@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function App({ Component, pageProps }) {
   return (
-    <html>
+    <>
       <Head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -28,11 +28,11 @@ export default function App({ Component, pageProps }) {
         />
       </Head>
 
-      <body
+      <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Component {...pageProps} />
-      </body>
-    </html>
+      </div>
+    </>
   )
 }
