@@ -1,17 +1,29 @@
 "use client"
 
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect, useRef, ActionDispatch, FormEvent } from "react";
 import * as signalR from "@microsoft/signalr";
 
 import Icon from "./Icon"
 import { api_url } from "../../pages";
+import { Todo, TodoAction, TodoActionType, TodoServerStatus } from "./types";
 
-function TodoList({ todos, dispatch, todoStatus }) {
+interface TodoListProps {
+  todos: Todo[],
+  dispatch: ActionDispatch<[action: TodoAction]>,
+  todoStatus: TodoServerStatus
+}
+
+interface ItemProps {
+  item: Todo,
+  dispatch: ActionDispatch<[action: TodoAction]>,
+}
+
+function TodoList({ todos, dispatch, todoStatus }: TodoListProps) {
   const API_URL = useContext(api_url);
 
   // connect to SignalR
   useEffect(() => {
-    let connection;
+    let connection: signalR.HubConnection | undefined;
 
     async function startConnection() {
       // get url and credentials
@@ -19,7 +31,7 @@ function TodoList({ todos, dispatch, todoStatus }) {
         method: "POST",
         credentials: "omit" // CORS
       }).then(r => r.json())
-        .catch(e => {
+        .catch(() => {
           throw Error("could not negotiate");
         });
 
@@ -35,7 +47,7 @@ function TodoList({ todos, dispatch, todoStatus }) {
       // bind to todo updates / add
       connection.on("todoUpdated", (updatedTodo) => {
         dispatch({
-          type: 'edit',
+          type: TodoActionType.EDIT,
           todo: updatedTodo,
         });
       });
@@ -43,8 +55,8 @@ function TodoList({ todos, dispatch, todoStatus }) {
       // bind to todo deletes
       connection.on("todoDeleted", (deletedTodo) => {
         dispatch({
-          type: 'delete',
-          id: deletedTodo.id
+          type: TodoActionType.DELETE,
+          todo: deletedTodo
         })
       });
 
@@ -63,28 +75,29 @@ function TodoList({ todos, dispatch, todoStatus }) {
     };
   }, []);
 
+  const todoEmptyMessage: Record<TodoServerStatus, string> = {
+    [TodoServerStatus.ERROR]: "Не загрузило :(",
+    [TodoServerStatus.CONNECTED]: "Якось порожньо",
+    [TodoServerStatus.CONNECTING]: "Гружусі",
+    [TodoServerStatus.CONNECTING_LONG]: "Мабуть сервак спить",
+  }
+
   return (
     <ol className="todo_list">
       {todos && todos.length > 0 ? (
         todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} />)
       ) : (
-        <p>{
-          todoStatus === -1 ? "Не загрузило :(" :
-            todoStatus === 0 ? "Якось порожньо" :
-              todoStatus === 1 ? "Гружусі" :
-                todoStatus === 2 ? "Мабуть сервак спить" :
-                  "Помилка чи шо"
-        }</p>
+        <p>{todoEmptyMessage[todoStatus]}</p>
       )}
     </ol>
   );
 }
 
-function Item({ item, dispatch }) {
+function Item({ item, dispatch }: ItemProps) {
   const API_URL = useContext(api_url);
 
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // delete button logic
   const handleDelete = async () => {
@@ -103,6 +116,7 @@ function Item({ item, dispatch }) {
 
   // checkbox button logic
   const handleCheck = async () => {
+    console.log("sending request to server");
     const response = await fetch(`${API_URL}/api/todos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -110,8 +124,9 @@ function Item({ item, dispatch }) {
     });
 
     if (response.ok) {
+      console.log("response ok, dispatching");
       dispatch({
-        type: 'edit',
+        type: TodoActionType.EDIT,
         todo: { ...item, done: !item.done }
       });
     } else {
@@ -140,10 +155,10 @@ function Item({ item, dispatch }) {
   // send to server
   const handleEditFinish = async () => {
     const prevText = item.text;
-    const newText = inputRef.current.value;
+    const newText = inputRef.current!.value;
 
     dispatch({
-      type: 'edit',
+      type: TodoActionType.EDIT,
       todo: { ...item, text: newText }
     });
 
@@ -158,14 +173,14 @@ function Item({ item, dispatch }) {
       console.error("error editing");
 
       dispatch({
-        type: 'edit',
+        type: TodoActionType.EDIT,
         todo: { ...item, text: prevText }
       });
     }
   }
 
   // on enter press
-  const handleInputSubmit = (event) => {
+  const handleInputSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEditing(false);
     handleEditFinish();

@@ -10,10 +10,11 @@ import TodoList from "../app/components/TodoList";
 import TodoBanner from "../app/components/TodoBanner";
 
 import todoReducer from "../app/lib/todoReducer";
+import { TodoActionType, TodoServerStatus } from "../app/components/types";
 
 export default function Home() {
   const [todos, dispatch] = useReducer(todoReducer, []);
-  const [todoStatus, setStatus] = useState(1);
+  const [todoStatus, setStatus] = useState<TodoServerStatus>(TodoServerStatus.CONNECTING);
   const API_URL = useContext(api_url);
 
   useEffect(() => {
@@ -21,17 +22,18 @@ export default function Home() {
       .then((res) => res.text())
       .then((data) => JSON.parse(data))
       .then((data) => dispatch({
-        type: 'set',
+        type: TodoActionType.SET,
         todos: data,
       }))
-      .then(() => setStatus(0))
+      .then(() => setStatus(TodoServerStatus.CONNECTED))
       .catch(e => {
         console.error("error fetching todods: " + e);
-        setStatus(-1);
+        setStatus(TodoServerStatus.ERROR);
       })
-    const timer = setInterval(() => {
-      if (status === 1)
-        setStatus(2);
+
+    setInterval(() => {
+      if (todoStatus == 1)
+        setStatus(TodoServerStatus.CONNECTING_LONG);
     }, 2000);
   }, []);
 

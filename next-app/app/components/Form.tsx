@@ -3,15 +3,16 @@
 import Icon from "./Icon"
 import { api_url } from "../../pages";
 
-import { useContext } from "react";
+import { FormEvent, useContext } from "react";
 
 function Form({ todos, dispatch }) {
   const API_URL = useContext(api_url);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const value = event.target.todo.value;
+    const target = event.currentTarget;
+    const value = target.todo.value;
     const response = await fetch(`${API_URL}/api/todos`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -29,7 +30,7 @@ function Form({ todos, dispatch }) {
       console.error("failed to add todo");
     }
 
-    event.target.reset(); // resets form
+    target.reset(); // resets form
   };
 
   return (
