@@ -5,4 +5,5 @@ public class TodoDTO
     public required Guid id { get; set; }
     public required string text { get; set; }
     public required bool done { get; set; }
+    public required string content { get; set; }
 }

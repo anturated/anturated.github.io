@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState, useEffect, useRef, ActionDispatch, FormEvent } from "react";
+import { useContext, useState, useEffect, useRef, ActionDispatch, FormEvent, Dispatch, SetStateAction } from "react";
 import * as signalR from "@microsoft/signalr";
 
 import Icon from "./Icon"
@@ -11,14 +11,16 @@ interface TodoListProps {
   todos: Todo[],
   dispatch: ActionDispatch<[action: TodoAction]>,
   todoStatus: TodoServerStatus
+  setSelectedTodo: Dispatch<SetStateAction<Todo | null>>
 }
 
 interface ItemProps {
   item: Todo,
   dispatch: ActionDispatch<[action: TodoAction]>,
+  setSelectedTodo: Dispatch<SetStateAction<Todo | null>>
 }
 
-function TodoList({ todos, dispatch, todoStatus }: TodoListProps) {
+function TodoList({ todos, dispatch, todoStatus, setSelectedTodo }: TodoListProps) {
   const API_URL = useContext(api_url);
 
   // connect to SignalR
@@ -85,7 +87,7 @@ function TodoList({ todos, dispatch, todoStatus }: TodoListProps) {
   return (
     <ol className="todo_list">
       {todos && todos.length > 0 ? (
-        todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} />)
+        todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} setSelectedTodo={setSelectedTodo} />)
       ) : (
         <p>{todoEmptyMessage[todoStatus]}</p>
       )}
@@ -93,7 +95,7 @@ function TodoList({ todos, dispatch, todoStatus }: TodoListProps) {
   );
 }
 
-function Item({ item, dispatch }: ItemProps) {
+function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
   const API_URL = useContext(api_url);
 
   const [editing, setEditing] = useState(false);
@@ -202,7 +204,8 @@ function Item({ item, dispatch }: ItemProps) {
             />
           </button>
 
-          <p>{item.text}</p>
+          <p className={item.content ? "has-content" : ""}
+            onClick={() => setSelectedTodo(item)}>{item.text}</p>
 
           <div className="todo_items_right">
             <button onClick={handleEdit}>

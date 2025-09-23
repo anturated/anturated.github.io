@@ -10,12 +10,14 @@ import TodoList from "../app/components/TodoList";
 import TodoBanner from "../app/components/TodoBanner";
 
 import todoReducer from "../app/lib/todoReducer";
-import { TodoActionType, TodoServerStatus } from "../app/components/types";
+import { Todo, TodoActionType, TodoServerStatus } from "../app/components/types";
+import Editor from "../app/components/TodoEditor";
 
 export default function Home() {
+  const API_URL = useContext(api_url);
   const [todos, dispatch] = useReducer(todoReducer, []);
   const [todoStatus, setStatus] = useState<TodoServerStatus>(TodoServerStatus.CONNECTING);
-  const API_URL = useContext(api_url);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/todos`)
@@ -45,7 +47,15 @@ export default function Home() {
         todo_total={todos.length}
       />
       <Form todos={todos} dispatch={dispatch} />
-      <TodoList todos={todos} dispatch={dispatch} todoStatus={todoStatus} />
+      <TodoList todos={todos} dispatch={dispatch}
+        todoStatus={todoStatus}
+        setSelectedTodo={setSelectedTodo}
+      />
+      {
+        selectedTodo && (
+          <Editor todo={selectedTodo} setSelectedTodo={setSelectedTodo} dispatch={dispatch} />
+        )
+      }
     </div>
   );
 }

@@ -2,6 +2,7 @@ export interface Todo {
   id: string;
   text: string;
   done: boolean;
+  content: string;
 }
 
 export enum TodoActionType {

@@ -32,7 +32,8 @@ public class TodoFunction
             {
                 id = t.Id,
                 text = t.text,
-                done = t.done
+                done = t.done,
+                content = t.content
             }).ToListAsync();
 
             response = req.CreateResponse(HttpStatusCode.OK);
@@ -71,6 +72,7 @@ public class TodoFunction
             {
                 text = newTodo.text,
                 done = newTodo.done,
+                content = newTodo.content,
                 id = newTodo.Id
             };
 
@@ -112,12 +114,14 @@ public class TodoFunction
 
             todo.text = request.text;
             todo.done = request.done;
+            todo.content = request.content;
             await context.SaveChangesAsync();
 
             var dto = new TodoDTO()
             {
                 text = todo.text,
                 done = todo.done,
+                content = todo.content,
                 id = todo.Id
             };
 
@@ -156,6 +160,7 @@ public class TodoFunction
             {
                 text = todo.text,
                 id = todo.Id,
+                content = todo.content,
                 done = todo.done
             };
 

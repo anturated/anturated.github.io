@@ -205,6 +205,9 @@ button {
   background-color: var(--color-surface-container-lowest);
   color: var(--color-on-background);
   padding: 12px;
+
+  font-family: "Maple Mono";
+  font-weight: bold;
 }
 
 .edit-form input {
@@ -240,4 +243,52 @@ button {
 
 .todo_items_right button span {
   fill: var(--color-tertiary);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--color-surface-container) * 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 1rem;
+  font-family: "Maple Mono";
+  font-size: "1rem";
+}
+
+.modal-content {
+  background: var(--color-surface-container-high);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-family: "Maple Mono";
+}
+
+.modal-buttons {
+  justify-self: flex-end;
+  display: flex;
+  gap: 20px;
+}
+
+.modal-buttons span {
+  font-size: 4vh;
+}
+
+.has-content {
+  text-decoration: underline dashed 1px var(--color-secondary);
+  font-style: italic;
+  font-weight: bold;
 }
