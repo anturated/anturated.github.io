@@ -1,7 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/web-manifest",
-  "short_name": "AntCP",
   "name": "Control panel for Big Money Inc.",
+  "short_name": "AntCP",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,17 +18,18 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
   "theme_color": "#a4d396",
   "background_color": "#11140f",
-  "note_taking": {
-    "new_note_url": "/"
-  },
+  "display": "standalone",
+  "start_url": ".",
   "shortcuts": [
     {
-      "name": "events",
+      "name": "Events",
       "url": "/events"
+    },
+    {
+      "name": "New note",
+      "url": "/"
     }
   ]
 }
