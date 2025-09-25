@@ -18,8 +18,8 @@
       "sizes": "512x512"
     }
   ],
-  "theme_color": "#a4d396",
-  "background_color": "#a4d396",
+  "theme_color": "#11140f",
+  "background_color": "#11140f",
   "display": "standalone",
   "start_url": ".",
   "shortcuts": [
