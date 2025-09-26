@@ -1,5 +1,6 @@
 import { useEffect, useState, } from "react"
-import "../styles/events.css"
+import "@/styles/globals.css"
+import Header from "@/app/components/Header";
 
 
 const API_URL = "http://localhost:5000/api/events";
@@ -14,7 +15,8 @@ export default function Events() {
     fetch(`${API_URL}/get`)
       .then(res => res.text())
       .then(text => JSON.parse(text))
-      .then(evs => setEvents(evs));
+      .then(evs => setEvents(evs))
+      .catch(e => console.error(e));
   }, []);
 
   const handleSpam = () => {
@@ -40,17 +42,20 @@ export default function Events() {
     fetch(`${API_URL}/init`);
   }
 
+  const inputClass = "bg-surface-container p-1 rounded-xl";
+
   return (
     <>
-      <form>
-        <input placeholder="email" onChange={e => setEmail(e.target.value)} />
-        <input placeholder="name" onChange={e => setName(e.target.value)} />
+      <Header />
+      <form className="flex flex-col m-3 max-w-100 gap-3">
+        <input className={inputClass} placeholder="email" onChange={e => setEmail(e.target.value)} />
+        <input className={inputClass} placeholder="name" onChange={e => setName(e.target.value)} />
       </form>
 
       <h3>{debugText}</h3>
-      <button onClick={handleSpam}>spam </button>
-      <button onClick={handleInit}>init</button>
-      <button onClick={handleNuke}>Nuke</button>
+      <Button onClick={handleSpam}>spam</Button>
+      <Button onClick={handleInit}>init</Button>
+      <Button onClick={handleNuke}>Nuke</Button>
 
       <ol>
         {events?.map((ev, index) =>
@@ -100,14 +105,25 @@ function Event({ ev, setEvents, email, name, setDebugText }) {
   const start = (new Date(ev.timeStart)).toLocaleString();
   const end = (new Date(ev.timeEnd)).toLocaleString();
 
+  const action = ev.slotsTaken >= ev.slots ? handleSendEmail : handleRegister;
+  const buttonText = ev.slotsTaken >= ev.slots ? "send email" : "register";
+
   return <li>
     <p>{ev.name}</p>
-    {/* <p>{ev.id}</p> */}
     <p>Start: {start}</p>
     <p>End: {end}</p>
     <p className="slots">{ev.slotsTaken}/{ev.slots}</p>
-    <button onClick={ev.slotsTaken >= ev.slots ? handleSendEmail : handleRegister}>
-      {ev.slotsTaken >= ev.slots ? "send email" : "register"}
-    </button>
+    <Button onClick={action}>
+      {buttonText}
+    </Button>
   </li>
-} 
+}
+
+function Button({ onClick, children }) {
+  return <button
+    className="bg-primary text-on-primary rounded-xl p-2 m-1"
+    onClick={onClick}
+  >
+    {children}
+  </button>
+}

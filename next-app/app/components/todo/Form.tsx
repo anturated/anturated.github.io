@@ -1,7 +1,7 @@
 "use client"
 
-import Icon from "./Icon"
-import { api_url } from "../../pages";
+import Icon from "../Icon"
+import { api_url } from "@/pages/todo";
 
 import { FormEvent, useContext } from "react";
 
@@ -34,8 +34,8 @@ function Form({ todos, dispatch }) {
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      <label htmlFor="todo">
+    <form className="flex gap-3 w-full" onSubmit={handleSubmit}>
+      <label className="bg-surface-container p-3.5 rounded-2xl flex-1" htmlFor="todo">
         <input
           type="text"
           name="todo"
@@ -43,8 +43,7 @@ function Form({ todos, dispatch }) {
           placeholder="Попиши мені тута"
         />
       </label>
-      <button>
-        <span className="visually-hidden">Submit</span>
+      <button className="bg-primary text-surface min-w-15 rounded-2xl flex items-center justify-center">
         <Icon i="add" />
       </button>
     </form>

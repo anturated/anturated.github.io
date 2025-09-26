@@ -1,3 +1,4 @@
+import 'material-symbols';
 interface IconProps {
   i: string
 }

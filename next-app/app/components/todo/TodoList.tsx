@@ -3,8 +3,8 @@
 import { useContext, useState, useEffect, useRef, ActionDispatch, FormEvent, Dispatch, SetStateAction } from "react";
 import * as signalR from "@microsoft/signalr";
 
-import Icon from "./Icon"
-import { api_url } from "../../pages";
+import Icon from "../Icon"
+import { api_url } from "@/pages/todo";
 import { Todo, TodoAction, TodoActionType, TodoServerStatus } from "./types";
 
 interface TodoListProps {
@@ -85,7 +85,7 @@ function TodoList({ todos, dispatch, todoStatus, setSelectedTodo }: TodoListProp
   }
 
   return (
-    <ol className="todo_list">
+    <ol className="w-full space-y-5">
       {todos && todos.length > 0 ? (
         todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} setSelectedTodo={setSelectedTodo} />)
       ) : (
@@ -194,45 +194,45 @@ function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
     handleEditFinish();
   }
 
+  const modifiers = item.content ? " italic" : "";
+
   return (
-    <li id={item?.id} className="todo_item">
-      {!editing ? (
-        <>
-          <button className="todo_items_left" onClick={handleCheck}>
-            <Icon
-              i={item.done ? "check_box" : "check_box_outline_blank"}
-            />
+    <li id={item?.id}
+      className="bg-surface-container outline-1 outline-outline/50 rounded-2xl">
+      <div className="flex flex-row items-center justify-center p-3">
+        <button className="p-1 flex items-center justify-center" onClick={handleCheck}>
+          <Icon
+            i={item.done ? "check_box" : "check_box_outline_blank"}
+          />
+        </button>
+
+        {!editing ? (
+          <span className={"flex-1 text-center" + modifiers}
+            onClick={() => setSelectedTodo(item)}>{item.text}</span>
+        ) : (
+          <form className="outline-0" onSubmit={handleInputSubmit}>
+            <label htmlFor="edit-todo">
+              <input
+                ref={inputRef}
+                type="text"
+                name="edit-todo"
+                id="edit-todo"
+                defaultValue={item?.text}
+                onBlur={handleInputBlur}
+              />
+            </label>
+          </form>
+        )}
+        <div className="flex flex-row gap-1 p-1">
+          <button className="flex items-center justify-center" onClick={handleEdit}>
+            <Icon i="edit" />
           </button>
-
-          <p className={item.content ? "has-content" : ""}
-            onClick={() => setSelectedTodo(item)}>{item.text}</p>
-
-          <div className="todo_items_right">
-            <button onClick={handleEdit}>
-              <span className="visually-hidden">Edit</span>
-              <Icon i="edit" />
-            </button>
-            <button onClick={handleDelete}>
-              <span className="visually-hidden">Delete</span>
-              <Icon i="delete" />
-            </button>
-          </div>
-        </>
-      ) : (
-        <form className="edit-form" onSubmit={handleInputSubmit}>
-          <label htmlFor="edit-todo">
-            <input
-              ref={inputRef}
-              type="text"
-              name="edit-todo"
-              id="edit-todo"
-              defaultValue={item?.text}
-              onBlur={handleInputBlur}
-            />
-          </label>
-        </form>
-      )}
-    </li>
+          <button className="flex items-center justify-center" onClick={handleDelete}>
+            <Icon i="delete" />
+          </button>
+        </div>
+      </div>
+    </li >
   );
 }
 

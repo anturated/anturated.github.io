@@ -1,0 +1,496 @@
+export enum RewardType {
+  "vauban",
+  "vandal",
+  "wraith",
+  "skin",
+  "helmet",
+  "nitain",
+  "mutalist",
+  "weapon",
+  "fieldron",
+  "detonite",
+  "mutagen",
+  "aura",
+  "neuralSensors",
+  "orokinCell",
+  "alloyPlate",
+  "circuits",
+  "controlModule",
+  "ferrite",
+  "gallium",
+  "morphics",
+  "nanoSpores",
+  "oxium",
+  "rubedo",
+  "salvage",
+  "plastids",
+  "polymerBundle",
+  "argonCrystal",
+  "cryotic",
+  "tellurium",
+  "neurodes",
+  "nightmare",
+  "endo",
+  "reactor",
+  "catalyst",
+  "forma",
+  "synthula",
+  "exilus",
+  "riven",
+  "kavatGene",
+  "kubrowEgg",
+  "traces",
+  "other",
+  "credits"
+}
+export enum Enemy {
+  "Orokin",
+  "Corrupted",
+  "Infested",
+  "Corpus",
+  "Grineer",
+  "Tenno",
+  "Narmer"
+}
+export enum MissionType {
+  "Ancient Retribution",
+  "Arena",
+  "Assassination",
+  "Assault",
+  "Capture",
+  "Conclave",
+  "Dark Sector Defection",
+  "Dark Sector Defense",
+  "Dark Sector Disruption",
+  "Dark Sector Excavation",
+  "Dark Sector Sabotage",
+  "Dark Sector Survival",
+  "Defense",
+  "Disruption",
+  "Excavation",
+  "Extermination (Archwing)",
+  "Extermination",
+  "Free Roam",
+  "Hijack",
+  "Hive",
+  "Hive Sabotage",
+  "Interception",
+  "Interception (Archwing)",
+  "Mobile Defense",
+  "Mobile Defense (Archwing)",
+  "Orokin Sabotage",
+  "Orphix",
+  "Pursuit (Archwing)",
+  "Relay",
+  "Rescue",
+  "Rush (Archwing)",
+  "Sabotage",
+  "Sabotage (Archwing)",
+  "Skirmish",
+  "Spy",
+  "Survival",
+  "Volatile"
+}
+export enum Syndicate {
+  "Arbiters of Hexis",
+  "Cephalon Suda",
+  "Assassins",
+  "Nightwave",
+  "Ostrons",
+  "Vox Solaris",
+  "Solaris United",
+  "Perrin Sequence",
+  "Steel Meridian",
+  "Red Veil",
+  "New Loka"
+}
+export interface CountedItem {
+  count: number,
+  type: string,
+}
+export interface Reward { // TODO:
+  countedItems: CountedItem[],
+  thumbnail: string,
+  color: number,
+  credits: number, // TODO: int32
+  asString: string,
+  items: string[],
+  itemString: string[],
+}
+export interface Mission {
+  reward: Reward,
+  node: string,
+  nodeKey?: string,
+  faction: Enemy,
+  factionKey?: Enemy,
+  maxEnemyLevel: number,
+  minEnemyLevel: number,
+  maxWaveNum: number,
+  type: MissionType,
+  typeKey?: MissionType,
+  nightmare: boolean,
+  archwingRequired: boolean,
+  isSharkwing?: boolean,
+  enemySpec?: string,
+  levelOverride?: string,
+  advancedSpawners?: string[],
+  requiredItems?: string[],
+  consumeRequiredItems?: boolean,
+  leaderAlwaysAllowed?: boolean,
+  levelAuras?: string[],
+  description: string
+}
+export interface Alert {
+  id: string,
+  activation: Date,
+  expiry: Date,
+  mission: any,
+  rewardTypes: RewardType[],
+}
+export interface Arbitration {
+  id: string,
+  activation: Date,
+  expiry: Date,
+  node: string,
+  enemy: string,
+  enemyKey: string,
+  type: Enemy,
+  typeKey: Enemy,
+  archwing: boolean,
+  sharkwing: boolean,
+}
+export interface ArchonHunt {
+  id: string,
+  activation: Date,
+  expiry: Date,
+  rewardPool: string,
+  missions: Mission[],
+  boss: string,
+  faction: Enemy,
+  factionKey?: Enemy,
+}
+export enum CambionCycles {
+  "vome", "fass"
+}
+export interface CambionCycle {
+  id: string,
+  expiry: Date,
+  activation: Date,
+  state: CambionCycles,
+}
+export interface CetusCycle {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  isDay: boolean,
+  state?: ["day", "night"],
+  timeLeft: string,
+  isCetus: boolean,
+  shortString?: string,
+}
+export interface ConclaveChallenge {
+  mode: string,
+  amount: number,
+  daily: boolean,
+  desctiption: string,
+  id: string,
+  expiry: string,
+  category: string,
+  rootChallenge: boolean,
+}
+export interface ConstructionProgress {
+  id: string,
+  fomorianProgress: string,
+  razorbackProgress: string,
+  unknownProgress: string,
+}
+export interface DailyDeal {
+  sold: number,
+  item: string,
+  uniqueName: string,
+  total: number,
+  eta: string,
+  originalPrice: number,
+  salePrice: number,
+  discount: number,
+  expiry: string,
+  id: string,
+}
+export interface DarkSector {
+  defenderMOTD: string,
+  deployerName: string,
+  defenferDeploymentActivation: number,
+  defenderName: string,
+  deployerClan: string,
+  isAlliance: boolean,
+  id: string,
+  history: any[], // TODO:
+}
+export interface DeepArchimedia {
+  id?: string,
+  activation?: string,
+  expiry?: string,
+  missions?: any[], // TODO:
+  personalModifiers: any[], // TODO:
+}
+export interface EarthCycle {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  isDay: boolean,
+  timeLeft: string,
+}
+export interface Event {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  maximumScore?: number,
+  currentScore?: number,
+  smallInterval?: number,
+  largeInterval?: number,
+  faction?: Enemy,
+  description?: String,
+  tooltip?: string,
+  node?: string,
+  concurrentNodes?: string[],
+  victimNode?: string,
+  scoreLocTag?: string,
+  rewards?: Reward[],
+  health?: number,
+  affiliatedWith?: Syndicate,
+  jobs?: any[], // TODO:
+  interimSteps?: { type: string, progressAmt: number }[],
+  progressTotal?: number,
+  showTotalAtEndOfMission?: boolean,
+  isPersonal?: boolean,
+  isCommunity?: boolean,
+  regionDrops?: string[],
+  archwingDtops?: string[],
+  asString?: string,
+  metadata?: any,
+  completionBonuses?: number[],
+  scoreVar?: string,
+  altExpiry?: Date,
+  altActivation?: Date,
+  nextAlt?: { expiry: Date, avtivation: Date },
+  tag?: string,
+}
+export interface Fissure {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  node: string,
+  missionType: MissionType,
+  missionKey?: MissionType,
+  tier: ["Lith", "Neo", "Meso", "Axi", "Requiem"],
+  tierNum: [1, 2, 3, 4, 5]
+  enemy: Enemy,
+  enemyKey?: Enemy,
+  isStorm?: boolean,
+  isHard?: boolean,
+}
+export interface FlashSale {
+  item: string,
+  discount: number,
+  premiumOverride: number,
+  isPopular: boolean,
+  isFeatured: boolean,
+}
+export interface GlobalUpgrade {
+  start?: string,
+  end?: string,
+  upgrade?: string,
+  operation?: string,
+  operationSymbol?: string,
+  upgradeOperationValue?: number,
+  eta?: string,
+  desc?: string
+}
+export interface Invasion {
+  id?: string,
+  activation?: Date,
+  expiry: Date,
+  attacker?: { reward?: Reward, faction?: Enemy, factionKey?: Enemy },
+  completed: boolean,
+  complerion: number,
+  count: number,
+  defender?: { reward?: Reward, faction?: Enemy, factionKey?: Enemy },
+  desc: string,
+  eta?: string,
+  node: string,
+  nodeKey?: string,
+  requiredRuns: number,
+  rewardTypes?: RewardType[],
+  startString?: string,
+  vsInfestation: boolean,
+}
+export interface News {
+  date: string,
+  imageLink: string,
+  eta: string,
+  primeAccess: boolean,
+  stream: boolean,
+  translations?: { es: string },
+  link: string,
+  update: boolean,
+  id: string,
+  asString: string,
+  message: string,
+  priority: boolean,
+}
+export interface NightwaveChallenge {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  isDaily?: boolean,
+  isElite?: boolean,
+  title?: string,
+  desc?: string,
+  reputation?: number,
+}
+export interface Nightwave {
+  id: string,
+  activation?: Date,
+  expiry?: Date,
+  params?: any,
+  rewardTypes?: string[],
+  season?: number,
+  tag?: string,
+  phase?: number,
+  possibleChallenges?: NightwaveChallenge[],
+  activeChallenges?: NightwaveChallenge[],
+}
+export interface PersistentEnemy {
+  locationTag?: string,
+  agentType?: string,
+  rank?: number,
+  healthPercent?: number,
+  fleeDamage?: number,
+  region?: string,
+  lastDiscoveredTime?: string,
+  lastDiscoveredAt?: string,
+  isDiscovered?: boolean,
+  isUsingTicketing?: boolean,
+  pid?: string,
+}
+export interface SentientOutpost {
+  id: string,
+  node: number,
+  activation: Date,
+  expiry: Date,
+  active: boolean,
+  mission: { node: string, type: MissionType, faction: Enemy },
+}
+export interface Simaris {
+  target: string,
+  isTargetActive: boolean,
+  asString: string,
+}
+export interface Sortie {
+  id: string,
+  activation: Date,
+  expiry: Date,
+  rewardPool: string,
+  variants: { node: string, boss: string, missionType: MissionType, planet: string, modifier: string, modifierDescription: string }[],
+  boss: string,
+  faction: Enemy,
+  factionKey?: Enemy,
+}
+export interface SimpleReward {
+  name?: string,
+  cost?: number,
+}
+export interface WorldState {
+  id?: string,
+  activation: Date,
+  expiry: Date,
+}
+export interface SteelPath {
+  activation?: Date,
+  expiry?: Date,
+  currentReward: SimpleReward,
+  remaining: string,
+  rotation: SimpleReward[],
+  evergreens: SimpleReward[],
+  incursions: WorldState,
+}
+export interface SyndicateJob {
+  activation?: Date,
+  expiry?: Date,
+  rewardPool?: string[],
+  type?: string,
+  enemyLevels?: number[],
+  standingStages?: number[],
+  minMR?: number,
+}
+export interface SyndicateMission {
+  nodes?: string[],
+  eta: string,
+  jobs: SyndicateMission
+  syndicate: Syndicate,
+  id: string,
+  expiry: Date,
+  activation: Date,
+}
+export interface VallisCycle {
+  id: string,
+  expiry: string,
+  timeLeft: string,
+  isWarm: boolean,
+}
+export interface VoidTrader {
+  id?: string,
+  activation?: Date,
+  expiry?: Date,
+  character: string,
+  location: string,
+  inventory: { item: string, ducats: number, credits: number }[],
+  psId: string,
+  active: boolean,
+  startString: string,
+  endString: string,
+}
+
+export interface DarvoDeal {
+  sold: number,
+  item: string,
+  uniqueName: string,
+  total: number,
+  eta: string,
+  originalPrice: number,
+  salePrice: number,
+  discount: number,
+  expiry: string,
+  id: string
+}
+
+export interface HubData {
+  timestamp: Date,
+  alerts: Alert[],
+  arbitration: Arbitration,
+  archonHunt: ArchonHunt,
+  cambionCycle: CambionCycle,
+  cetusCycle: CetusCycle,
+  conclaveChallenges: ConclaveChallenge[],
+  constructionProgress: ConstructionProgress,
+  dailyDeals: DailyDeal[],
+  darkSectors?: DarkSector[],
+  deepArchimedia?: DeepArchimedia,
+  earthCycle: EarthCycle,
+  events: Event[],
+  fissures: Fissure[],
+  flashSales: FlashSale[],
+  globalUpgrades: GlobalUpgrade[],
+  invasions: Invasion[],
+  kuva?: Arbitration[], // TODO: not its own type
+  news: News[],
+  nightwave?: Nightwave,
+  persistentEnemies: PersistentEnemy[],
+  sentientOutposts: SentientOutpost[],
+  simaris?: Simaris,
+  sortie: Sortie,
+  steelPath: SteelPath,
+  syndicateMissions: SyndicateMission[],
+  vallisCycle: VallisCycle,
+  voidTrader: VoidTrader,
+}

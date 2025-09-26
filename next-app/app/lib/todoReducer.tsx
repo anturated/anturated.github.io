@@ -1,4 +1,4 @@
-import { Todo, TodoAction, TodoActionType } from "../components/types"
+import { Todo, TodoAction, TodoActionType } from "../components/todo/types"
 
 export default function todoReducer(todos: Todo[], action: TodoAction): Todo[] {
   switch (action.type) {

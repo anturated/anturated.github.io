@@ -24,10 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-          rel="stylesheet"
-        />
+        <link rel="manifest" href="/manifest.webmanifest" />
       </Head>
 
       <div
