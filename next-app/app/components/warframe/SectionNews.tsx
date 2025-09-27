@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Section from "./Section";
 import { HubData } from "./types";
 
-export default function SectionNews({ data }: { data: HubData | null }) {
+export default function SectionNews({ data }: { data: HubData | undefined }) {
   const [newsIndex, setIndex] = useState(0);
   const delay = 3000;
 

@@ -1,4 +1,4 @@
-import 'material-symbols';
+import '@material-symbols/font-400';
 interface IconProps {
   i: string
 }

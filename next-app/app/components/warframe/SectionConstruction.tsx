@@ -1,7 +1,7 @@
 import Section from "./Section";
 import { HubData } from "./types";
 
-export default function Construction({ data }: { data: HubData | null }) {
+export default function Construction({ data }: { data: HubData | undefined }) {
   const fomorian = parseFloat(data?.constructionProgress.fomorianProgress ?? "0") % 100;
   const razorback = parseFloat(data?.constructionProgress.razorbackProgress ?? "0") % 100;
 

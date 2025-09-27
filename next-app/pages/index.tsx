@@ -1,6 +1,12 @@
 import Header from "@/app/components/Header";
 import Icon from "@/app/components/Icon";
+import { Metadata } from "next";
 
+
+export const metadata: Metadata = {
+  title: "bobers",
+  description: "Better webapp in the world.",
+};
 
 export default function Index() {
   return (

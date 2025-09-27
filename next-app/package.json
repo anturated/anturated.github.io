@@ -13,13 +13,14 @@
   "dependencies": {
     "@fontsource/maple-mono": "^5.2.5",
     "@microsoft/signalr": "^9.0.6",
-    "material-symbols": "^0.36.0",
     "next": "15.5.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "swr": "^2.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@material-symbols/font-400": "^0.36.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",

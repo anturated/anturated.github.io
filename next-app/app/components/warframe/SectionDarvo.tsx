@@ -1,17 +1,11 @@
-import { useEffect, useState } from "react";
 import Section from "./Section";
 import { DarvoDeal, HubData } from "./types";
 import Timer from "./Timer";
+import useSWR, { Fetcher } from "swr";
 
 export default function Darvo() {
-  const [data, setData] = useState<DarvoDeal[] | null>(null);
-
-  useEffect(() => {
-    fetch("https://api.warframestat.us/pc/dailyDeals")
-      .then(res => res.json())
-      .then(newData => setData(newData))
-      .catch(e => console.log(e));
-  }, [])
+  const fetcher: Fetcher<DarvoDeal[], string> = (url: string) => fetch(url).then(res => res.json());
+  const { data, error, isLoading } = useSWR("https://api.warframestat.us/pc/dailyDeals", fetcher);
 
   const item = data?.[0];
 

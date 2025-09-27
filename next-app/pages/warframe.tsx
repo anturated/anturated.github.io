@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
 import Header from "../app/components/Header";
-// import "@/styles/warframe.css";
 import { HubData } from "../app/components/warframe/types";
 import CycleTimers from "../app/components/warframe/SectionCycleTimers";
 import Construction from "../app/components/warframe/SectionConstruction";
 import Darvo from "@/app/components/warframe/SectionDarvo";
 import SectionNews from "@/app/components/warframe/SectionNews";
+import useSWR, { Fetcher } from "swr";
 
 export default function Warframe() {
-  const [data, setData] = useState<HubData | null>(null);
+  const fetcher: Fetcher<HubData, string> = (url: string) => fetch(url).then(res => res.json());
 
-  useEffect(() => {
-    fetch("https://api.warframestat.us/pc")
-      .then((res) => res.json())
-      .then(jsonData => setData(jsonData))
-      .catch(e => console.error(e));
-  }, []);
+  const { data, error, isLoading } = useSWR("https://api.warframestat.us/pc", fetcher);
 
   return <>
     <Header />

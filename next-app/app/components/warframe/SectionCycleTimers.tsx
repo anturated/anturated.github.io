@@ -5,7 +5,7 @@ import { CambionCycles, HubData } from "./types";
 import Timer from "./Timer";
 
 export interface CycleTimersProps {
-  data: HubData | null
+  data: HubData | undefined
 }
 
 export default function CycleTimers({ data }: CycleTimersProps) {

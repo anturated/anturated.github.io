@@ -10,6 +10,7 @@ import TodoBanner from "../app/components/todo/TodoBanner";
 import todoReducer from "../app/lib/todoReducer";
 import { Todo, TodoActionType, TodoServerStatus } from "../app/components/todo/types";
 import Editor from "../app/components/todo/TodoEditor";
+import useSWR, { Fetcher } from "swr";
 
 export default function Home() {
   const API_URL = useContext(api_url);
@@ -17,32 +18,29 @@ export default function Home() {
   const [todoStatus, setStatus] = useState<TodoServerStatus>(TodoServerStatus.CONNECTING);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
+  const fetcher: Fetcher<Todo[], string> = (url: string) => fetch(url).then(res => res.json());
+  const { data, error, isLoading } = useSWR(`${API_URL}/api/todos`, fetcher);
+
+  // TODO: remove reducer
   useEffect(() => {
-    fetch(`${API_URL}/api/todos`)
-      .then((res) => res.text())
-      .then((data) => JSON.parse(data))
-      .then((data) => dispatch({
+    if (!isLoading)
+      dispatch({
         type: TodoActionType.SET,
         todos: data,
-      }))
-      .then(() => setStatus(TodoServerStatus.CONNECTED))
-      .catch(e => {
-        console.error("error fetching todods: " + e);
-        setStatus(TodoServerStatus.ERROR);
-        dispatch({
-          type: TodoActionType.SET,
-          todos: [
-            { id: crypto.randomUUID.toString(), text: "сервак не загрузив", content: "", done: false },
-            { id: crypto.randomUUID.toString(), text: "на грайся поки з цим", content: "писанина", done: false },
-          ]
-        })
       })
+  }, [isLoading]);
 
-    setInterval(() => {
-      if (todoStatus == TodoServerStatus.CONNECTING)
-        setStatus(TodoServerStatus.CONNECTING_LONG);
-    }, 2000);
-  }, []);
+  useEffect(() => {
+    if (error) {
+      dispatch({
+        type: TodoActionType.SET,
+        todos: [
+          { id: crypto.randomUUID.toString(), text: "сервак не загрузив", content: "", done: false },
+          { id: crypto.randomUUID.toString(), text: "на грайся поки з цим", content: "писанина", done: false },
+        ]
+      })
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen md:flex md:flex-col">
