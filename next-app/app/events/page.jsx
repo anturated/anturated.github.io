@@ -1,6 +1,6 @@
 import { useEffect, useState, } from "react"
 import "@/styles/globals.css"
-import Header from "@/app/components/Header";
+import Header from "@/components/Header";
 
 
 const API_URL = "http://localhost:5000/api/events";

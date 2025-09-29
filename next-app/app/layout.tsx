@@ -4,6 +4,7 @@ import '../styles/globals.css'
 import Head from 'next/head'
 import { AppProps } from "next/app";
 import { Metadata } from 'next';
+import { ReactNode } from 'react';
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -15,23 +16,19 @@ import { Metadata } from 'next';
 //   subsets: ["latin"],
 // });
 
-// export const metadata: Metadata = {
-//   title: "bobers",
-//   description: "Better webapp in the world.",
-// };
+export const metadata: Metadata = {
+  title: "bobers",
+  description: "Better webapp in the world.",
+};
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <>
-      <Head>
-        <title>anturated</title>
-      </Head>
-      <div
-        className={`antialiased`}
-      // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Component {...pageProps} />
-      </div>
-    </>
+    <html lang="en">
+      <body>
+        <div className={`antialiased`} >
+          {children}
+        </div>
+      </body>
+    </html>
   )
 }

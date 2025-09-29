@@ -1,5 +1,5 @@
-import Header from "@/app/components/Header";
-import Icon from "@/app/components/Icon";
+import Header from "@/components/Header";
+import Icon from "@/components/Icon";
 import { Metadata } from "next";
 
 

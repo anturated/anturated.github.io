@@ -1,10 +1,12 @@
+"use client"
+
 import { useEffect, useState } from "react";
-import Header from "../app/components/Header";
-import { HubData } from "../app/components/warframe/types";
-import CycleTimers from "../app/components/warframe/SectionCycleTimers";
-import Construction from "../app/components/warframe/SectionConstruction";
-import Darvo from "@/app/components/warframe/SectionDarvo";
-import SectionNews from "@/app/components/warframe/SectionNews";
+import Header from "../../components/Header";
+import { HubData } from "../../components/warframe/types";
+import CycleTimers from "../../components/warframe/SectionCycleTimers";
+import Construction from "../../components/warframe/SectionConstruction";
+import Darvo from "@/components/warframe/SectionDarvo";
+import SectionNews from "@/components/warframe/SectionNews";
 import useSWR, { Fetcher } from "swr";
 
 export default function Warframe() {
