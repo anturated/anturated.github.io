@@ -1,3 +1,5 @@
+"use client"
+
 import { getDistance } from "@/utils/date";
 import { useEffect, useState } from "react";
 

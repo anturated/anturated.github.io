@@ -4,7 +4,6 @@ import { useContext, useState, useEffect, useRef, ActionDispatch, FormEvent, Dis
 import * as signalR from "@microsoft/signalr";
 
 import Icon from "../Icon"
-import { api_url } from "@/pages/todo";
 import { Todo, TodoAction, TodoActionType, TodoServerStatus } from "./types";
 
 interface TodoListProps {
@@ -21,61 +20,59 @@ interface ItemProps {
 }
 
 function TodoList({ todos, dispatch, todoStatus, setSelectedTodo }: TodoListProps) {
-  const API_URL = useContext(api_url);
-
   // connect to SignalR
-  useEffect(() => {
-    let connection: signalR.HubConnection | undefined;
-
-    async function startConnection() {
-      // get url and credentials
-      const negotiation = await fetch(`${API_URL}/api/todos/negotiate`, {
-        method: "POST",
-        credentials: "omit" // CORS
-      }).then(r => r.json())
-        .catch(() => {
-          throw Error("could not negotiate");
-        });
-
-      // create connection to Azure SignalR thing
-      const connection = new signalR.HubConnectionBuilder()
-        .withUrl(negotiation.Url, {
-          accessTokenFactory: () => negotiation.AccessToken,
-          withCredentials: false // CORS
-        })
-        .withAutomaticReconnect()
-        .build();
-
-      // bind to todo updates / add
-      connection.on("todoUpdated", (updatedTodo) => {
-        dispatch({
-          type: TodoActionType.EDIT,
-          todo: updatedTodo,
-        });
-      });
-
-      // bind to todo deletes
-      connection.on("todoDeleted", (deletedTodo) => {
-        dispatch({
-          type: TodoActionType.DELETE,
-          todo: deletedTodo
-        })
-      });
-
-      await connection.start().catch(console.error);
-    }
-
-    // async workaround
-    startConnection().catch(e => {
-      console.error(e);
-    });
-
-    return () => {
-      if (connection) {
-        connection.stop();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   let connection: signalR.HubConnection | undefined;
+  //
+  //   async function startConnection() {
+  //     // get url and credentials
+  //     const negotiation = await fetch('/api/todos/negotiate', {
+  //       method: "POST",
+  //       credentials: "omit" // CORS
+  //     }).then(r => r.json())
+  //       .catch(() => {
+  //         throw Error("could not negotiate");
+  //       });
+  //
+  //     // create connection to Azure SignalR thing
+  //     const connection = new signalR.HubConnectionBuilder()
+  //       .withUrl(negotiation.Url, {
+  //         accessTokenFactory: () => negotiation.AccessToken,
+  //         withCredentials: false // CORS
+  //       })
+  //       .withAutomaticReconnect()
+  //       .build();
+  //
+  //     // bind to todo updates / add
+  //     connection.on("todoUpdated", (updatedTodo) => {
+  //       dispatch({
+  //         type: TodoActionType.EDIT,
+  //         todo: updatedTodo,
+  //       });
+  //     });
+  //
+  //     // bind to todo deletes
+  //     connection.on("todoDeleted", (deletedTodo) => {
+  //       dispatch({
+  //         type: TodoActionType.DELETE,
+  //         todo: deletedTodo
+  //       })
+  //     });
+  //
+  //     await connection.start().catch(console.error);
+  //   }
+  //
+  //   // async workaround
+  //   startConnection().catch(e => {
+  //     console.error(e);
+  //   });
+  //
+  //   return () => {
+  //     if (connection) {
+  //       connection.stop();
+  //     }
+  //   };
+  // }, []);
 
   const todoEmptyMessage: Record<TodoServerStatus, string> = {
     [TodoServerStatus.ERROR]: "Не загрузило :(",
@@ -84,33 +81,37 @@ function TodoList({ todos, dispatch, todoStatus, setSelectedTodo }: TodoListProp
     [TodoServerStatus.CONNECTING_LONG]: "Мабуть сервак спить",
   }
 
-  return (
-    <ol className="w-full space-y-5">
-      {todos && todos.length > 0 ? (
-        todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} setSelectedTodo={setSelectedTodo} />)
-      ) : (
-        <p>{todoEmptyMessage[todoStatus]}</p>
-      )}
-    </ol>
-  );
+  return <>
+    {todos && todos.length > 0 ? (
+      <ol className="w-full space-y-5">
+        {todos?.map((item, index) => <Item key={index} item={item} dispatch={dispatch} setSelectedTodo={setSelectedTodo} />)}
+      </ol>
+    ) : (
+      <div className="flex items-center justify-center h-full w-full">
+        <span className="text-center">{todoEmptyMessage[todoStatus]}</span>
+      </div>
+    )}
+  </>;
 }
 
 function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
-  const API_URL = useContext(api_url);
 
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // delete button logic
   const handleDelete = async () => {
-    const response = await fetch(`${API_URL}/api/todos`, {
+    const response = await fetch('/api/todos', {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: item.id })
+      body: JSON.stringify(item)
     });
 
     if (response.ok) {
-      // TODO: reducer
+      dispatch({
+        type: TodoActionType.DELETE,
+        todo: await response.json(),
+      })
     } else {
       console.error("error deleting");
     }
@@ -119,7 +120,7 @@ function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
   // checkbox button logic
   const handleCheck = async () => {
     console.log("sending request to server");
-    const response = await fetch(`${API_URL}/api/todos`, {
+    const response = await fetch('/api/todos', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...item, done: !item.done })
@@ -164,7 +165,7 @@ function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
       todo: { ...item, text: newText }
     });
 
-    const response = await fetch(`${API_URL}/api/todos`, {
+    const response = await fetch('/api/todos', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...item, text: newText })
@@ -210,17 +211,16 @@ function Item({ item, dispatch, setSelectedTodo }: ItemProps) {
           <span className={"flex-1 text-center" + modifiers}
             onClick={() => setSelectedTodo(item)}>{item.text}</span>
         ) : (
-          <form className="outline-0" onSubmit={handleInputSubmit}>
-            <label htmlFor="edit-todo">
-              <input
-                ref={inputRef}
-                type="text"
-                name="edit-todo"
-                id="edit-todo"
-                defaultValue={item?.text}
-                onBlur={handleInputBlur}
-              />
-            </label>
+          <form className="outline-0 flex-1 flex justify-center" onSubmit={handleInputSubmit}>
+            <input
+              className="outline-0 text-center flex-1"
+              ref={inputRef}
+              type="text"
+              name="edit-todo"
+              id="edit-todo"
+              defaultValue={item?.text}
+              onBlur={handleInputBlur}
+            />
           </form>
         )}
         <div className="flex flex-row gap-1 p-1">

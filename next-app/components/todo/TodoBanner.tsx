@@ -5,7 +5,7 @@ interface TodoStatsProps {
 
 function TodoBanner({ todo_completed, todo_total }: TodoStatsProps) {
   return (
-    <div className=" grid items-center grid-cols-2 bg-surface-container-lowest rounded-2xl outline-outline outline-1 m-4 p-4">
+    <div className=" grid items-center w-full grid-cols-2 bg-surface-container-lowest rounded-2xl outline-outline outline-1 p-4">
       <div className="flex flex-col items-center gap-3">
         <span className="text-4xl font-semibold">Цево</span>
         <span className="italic">{
